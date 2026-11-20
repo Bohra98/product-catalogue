@@ -43,10 +43,19 @@
 | Shared types package | Backend and frontend are separate packages with separate `node_modules`, as requested. The API types live in `backend/src/contract.ts` and are copied to `frontend/src/api/types.ts`. Two copies can drift; the fix is in "next steps". |
 | Distributed cache and rate limit | Both are in memory, so they work per instance. Fine for one container. |
 
-## Not verified
+## How it was verified
 
-- **Docker.** Docker was not installed on the machine this was built on. The Dockerfiles, nginx template and `docker-compose.yml` were written carefully, and the compose YAML parses, but **they have not been built or run**. The npm path is the verified one: tests, a production build, a smoke test against live Fake Store, and a manual browser pass.
-- **SMTP delivery.** `SmtpMailer` is a thin wrapper around nodemailer and is only exercised through Docker Compose (Mailpit), so it is untested for the same reason. The `file` provider has been tested end to end.
+- **npm path:**
+  - Automated tests and typecheck for both apps, and a production build.
+  - A smoke test of every endpoint against live Fake Store.
+  - A manual browser pass of all five flows, with the enquiry landing as a `.eml` file in the outbox.
+- **Docker path:** tested by hand with `docker compose up --build` on Docker Desktop.
+  - All three containers reach a running state, and backend and frontend report healthy.
+  - nginx serves the SPA, including a refresh on deep links such as `/products/3` and `/categories/jewelery`.
+  - nginx forwards `/api`, image proxy included.
+  - All five flows work at :8080.
+  - Each enquiry arrives in Mailpit at :8025, which also covers `SmtpMailer`.
+- **Not covered:** the Docker checks are manual. No CI job builds the images or runs the stack yet, and nothing has been deployed to AWS.
 
 ## How this grows past the PoC
 
@@ -68,7 +77,7 @@
 
 ## With another day
 
-1. **Run and fix the Docker setup** on a machine with Docker, and add a CI workflow (GitHub Actions) that runs tests, typecheck and `docker compose build`.
+1. **Add a CI workflow** (GitHub Actions) that runs tests, typecheck and `docker compose build`, so the Docker path stays verified without a manual run.
 2. **Generate the API contract.** Publish an OpenAPI spec from the zod schemas and generate the frontend types from it, removing the hand-copied `types.ts`.
 3. **Persist enquiries** (DynamoDB or Postgres) before sending, and send through a queue (SQS) with retries, so a mail outage never loses an enquiry.
 4. **Playwright smoke test** of the five flows against `docker compose up`.

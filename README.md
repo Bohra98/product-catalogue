@@ -35,7 +35,12 @@ docker compose up --build
 - App: http://localhost:8080
 - Sales inbox (Mailpit): http://localhost:8025. Every enquiry shows up here as a real email.
 
-> The Dockerfiles and compose file were written for this PR, but Docker was not available on the machine they were written on, so they have **not** been run yet. The npm path above is the verified one. See `DECISIONS.md`.
+This was tested by hand with `docker compose up --build` on Docker Desktop:
+- all three containers come up healthy
+- the API and image proxy work through nginx
+- SPA deep links survive a refresh
+- all five flows work at :8080
+- each enquiry shows up in Mailpit at :8025
 
 ## Test
 

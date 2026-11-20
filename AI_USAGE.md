@@ -48,7 +48,11 @@ I gave Claude Code a structured brief: stack, constraints, the five acceptance c
   - Live smoke test of every endpoint against the real Fake Store API.
   - A real `.eml` written to the outbox.
   - Manual browser pass of all five flows: home shows 5 products, category shows top-rated plus more, search shows only matches, the product page opens, and the enquiry ends on "Thank you".
-- **Not checked:** the Dockerfiles and `docker-compose.yml`. Docker was not installed on the build machine, so they have never been built or run, and the SMTP/Mailpit path has never sent a real message. This is stated in the README and `DECISIONS.md`.
+- **Docker, checked by me rather than the agent:** Docker was not installed when the Dockerfiles and compose file were written, so the agent could not run them.
+  - I installed Docker Desktop. The Homebrew install needed `sudo`, which the agent's session could not provide.
+  - I ran `docker compose up --build` and followed a checklist the agent wrote: container health, API and image proxy through nginx, SPA deep-link refresh, all five flows at :8080, and the enquiry arriving in Mailpit at :8025.
+  - Everything passed on the first build, with no fixes needed.
+- **Not checked:** CI and an actual AWS deployment.
 
 ## Time spent
 

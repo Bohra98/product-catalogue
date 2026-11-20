@@ -50,9 +50,15 @@ The repo has two independent apps, each with its own `package.json` and `node_mo
 - API types are kept as two copies (`backend/src/contract.ts` and `frontend/src/api/types.ts`), the cost of separate packages. The next step is generating them from an OpenAPI spec.
 - No Playwright E2E, no IaC, no auth or cart.
 
-## ⚠️ Not verified
+## Verification
 
-**Docker was not available on the build machine.** The `Dockerfile`s, nginx template and `docker-compose.yml` have not been built or run, and the SMTP/Mailpit path is untested. Everything else has been verified (see below).
+- **npm:** automated tests, typecheck, production build, a smoke test against live Fake Store, and a manual browser pass of all five flows.
+- **Docker:** checked by hand with `docker compose up --build`.
+  - Containers come up healthy.
+  - The API and image proxy work through nginx, and SPA deep links survive a refresh.
+  - All five flows work at :8080.
+  - Enquiries arrive in Mailpit at :8025.
+- **Not yet:** a CI job for the Docker build, and an AWS deployment.
 
 ## How to test
 
@@ -72,6 +78,8 @@ Manual check:
 5. `ls backend/outbox` shows the email as a `.eml` file.
 
 Offline: set `PRODUCT_SOURCE=fixture` in `backend/.env`.
+
+With Docker: `docker compose up --build`. Then open http://localhost:8080 for the app and http://localhost:8025 for the Mailpit sales inbox.
 
 ## Docs
 
