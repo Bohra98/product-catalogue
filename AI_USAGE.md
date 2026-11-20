@@ -52,4 +52,4 @@ I gave Claude Code a structured brief: stack, constraints, the five acceptance c
 
 ## Time spent
 
-> **TODO (author):** fill in actual time and breakdown before submitting. This was left blank on purpose rather than estimated.
+About 4 hours in total.
