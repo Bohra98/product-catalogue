@@ -1,0 +1,13 @@
+# Frontend-specific ignores (the repo root .gitignore also applies).
+
+# Environment: never commit real values. Note that any VITE_* variable is
+# bundled into the public JS, so secrets must never go in frontend env files.
+.env
+.env.*
+*.env
+!.env.example
+
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
