@@ -1,0 +1,41 @@
+# One-command local stack: docker compose up --build
+#   App:          http://localhost:8080
+#   Sales inbox:  http://localhost:8025  (Mailpit: catches every enquiry email)
+# No accounts, keys or secrets needed.
+
+services:
+  backend:
+    build: ./backend
+    environment:
+      PORT: "4000"
+      TRUST_PROXY: "true"
+      PRODUCT_SOURCE: ${PRODUCT_SOURCE:-fakestore}
+      FEATURED_COUNT: ${FEATURED_COUNT:-5}
+      CATEGORY_FEATURED_COUNT: ${CATEGORY_FEATURED_COUNT:-3}
+      MAIL_PROVIDER: smtp
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      SMTP_SECURE: "false"
+      MAIL_FROM: catalogue@example.com
+      SALES_INBOX: sales@example.com
+    depends_on:
+      mailpit:
+        condition: service_started
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    environment:
+      API_UPSTREAM: http://backend:4000
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:v1.34.0
+    ports:
+      - "8025:8025"
+    restart: unless-stopped

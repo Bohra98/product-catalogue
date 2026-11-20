@@ -1,0 +1,7 @@
+node_modules
+dist
+outbox
+test
+.env
+.env.*
+!.env.example
