@@ -1,0 +1,16 @@
+{
+  "name": "product-catalogue",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Convenience scripts only. backend/ and frontend/ are independent apps with their own package.json and node_modules.",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "setup": "npm --prefix backend ci && npm --prefix frontend ci",
+    "dev": "node scripts/dev.mjs",
+    "test": "npm --prefix backend test && npm --prefix frontend test",
+    "typecheck": "npm --prefix backend run typecheck && npm --prefix frontend run typecheck",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build"
+  }
+}
