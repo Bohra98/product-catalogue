@@ -11,6 +11,9 @@
 **Search.**
 - Matching is case-insensitive and covers the title, description and category name.
 - The term is trimmed. A multi-word term must match every word, so `cotton jacket` finds products that mention both.
+- Each word matches the start of a word, not any substring. `men` finds "Men's" and "Mens" but not "Women's" or "recommended". `jacket` still finds "jackets". The trade-off: `ring` no longer finds "Earrings".
+- Query and product text are normalised the same way: accents are removed, apostrophes are dropped (`men's`, `men’s` and `mens` are the same) and other punctuation splits words (`t-shirt` = `t shirt`). Two neighbouring words are also tried joined, so `tshirt` finds both. A term made only of punctuation matches nothing.
+- The search page checks the 100-character cap itself, so a hand-edited URL gets a clear message instead of the API's generic validation error.
 - Results use the same top-rated order.
 - Search runs when the user clicks Search or presses Enter, not on every keystroke, since the criteria say "clicking the search button".
 - A blank term is blocked in the UI and rejected by the API (400). Terms are capped at 100 characters.

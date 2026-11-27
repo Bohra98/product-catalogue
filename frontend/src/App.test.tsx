@@ -107,6 +107,19 @@ describe('Search', () => {
     renderAt('/search?q=zzz');
     expect(await screen.findByText('No products match “zzz”.')).toBeInTheDocument();
   });
+
+  it('explains an over-long term from the URL without calling the API', async () => {
+    renderAt(`/search?q=${'z'.repeat(101)}`);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Search term must be 100 characters or fewer');
+    expect(mocked.search).not.toHaveBeenCalled();
+  });
+
+  it('shows a whitespace-only term from the URL as an empty box', async () => {
+    renderAt('/search?q=%20%20');
+    expect(screen.getByText('Enter a search term above.')).toBeInTheDocument();
+    expect(screen.getByRole('searchbox')).toHaveValue('');
+    expect(mocked.search).not.toHaveBeenCalled();
+  });
 });
 
 describe('Product page', () => {

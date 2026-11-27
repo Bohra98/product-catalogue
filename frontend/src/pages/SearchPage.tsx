@@ -1,13 +1,31 @@
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api/client';
 import { ProductGrid } from '../components/ProductCard';
+import { MAX_QUERY_LENGTH } from '../components/SearchBar';
 import { ErrorMessage, Loading } from '../components/Status';
 import { useAsync } from '../hooks/useAsync';
 
 export function SearchPage() {
   const [params] = useSearchParams();
   const query = (params.get('q') ?? '').trim();
-  const results = useAsync(() => (query ? api.search(query) : Promise.resolve([])), [query]);
+  // A hand-edited URL can exceed the input's maxLength. Say why here instead
+  // of showing the API's generic "Request is invalid".
+  const tooLong = query.length > MAX_QUERY_LENGTH;
+  const results = useAsync(
+    () => (query && !tooLong ? api.search(query) : Promise.resolve([])),
+    [query, tooLong],
+  );
+
+  if (tooLong) {
+    return (
+      <>
+        <h1>Search</h1>
+        <p className="status status--error" role="alert">
+          Search term must be {MAX_QUERY_LENGTH} characters or fewer.
+        </p>
+      </>
+    );
+  }
 
   if (!query) {
     return (

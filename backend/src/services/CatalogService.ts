@@ -23,14 +23,34 @@ export function compareTopRated(a: ProductRecord, b: ProductRecord): number {
   return b.rating.rate - a.rating.rate || b.rating.count - a.rating.count || a.id - b.id;
 }
 
-/** Lowercased, whitespace-split search terms. Every term must match. */
-export function tokenize(query: string): string[] {
-  return query.toLowerCase().split(/\s+/).filter(Boolean);
+/**
+ * Splits text into normalised words. Used for both the query and the product
+ * text, so both sides always agree:
+ * - lowercased, accents removed ("Fjällräven" -> "fjallraven")
+ * - apostrophes dropped, so "men's", "men’s" and "mens" are the same word
+ * - any other non-letter/digit is a word break, so "T-Shirt" and "T Shirt" match
+ */
+export function tokenize(text: string): string[] {
+  return text
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/['’ʼ`]/g, '')
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
 }
 
+/**
+ * Every term must be the start of some word in the product's title,
+ * description or category. Prefix matching keeps plurals ("jacket" finds
+ * "jackets") while stopping matches inside words ("men" must not find "women").
+ * Each pair of neighbouring words is also tried joined, so "tshirt" finds
+ * "T-Shirt" and "T Shirt"; a pair still starts at a word boundary.
+ */
 export function matchesQuery(product: ProductRecord, terms: string[]): boolean {
-  const haystack = `${product.title}\n${product.description}\n${product.category}`.toLowerCase();
-  return terms.every((t) => haystack.includes(t));
+  const words = tokenize(`${product.title} ${product.description} ${product.category}`);
+  const candidates = words.concat(words.slice(1).map((w, i) => words[i] + w));
+  return terms.every((t) => candidates.some((w) => w.startsWith(t)));
 }
 
 export class CatalogService {

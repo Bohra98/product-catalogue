@@ -86,6 +86,61 @@ describe('GET /api/products?q=', () => {
   it('rejects an overly long query', async () => {
     await request(app).get('/api/products').query({ q: 'x'.repeat(101) }).expect(400);
   });
+
+  it('accepts a query of exactly 100 characters', async () => {
+    await request(app).get('/api/products').query({ q: 'x'.repeat(100) }).expect(200);
+  });
+
+  it('rejects a repeated q parameter with 400', async () => {
+    await request(app).get('/api/products?q=men&q=women').expect(400);
+  });
+
+  const searchIds = async (q: string) => {
+    const res = await request(app).get('/api/products').query({ q }).expect(200);
+    return (res.body.products as Product[]).map((p) => p.id).sort((a, b) => a - b);
+  };
+  const MENS = [1, 2, 3, 4];
+  const WOMENS = [15, 16, 17, 18, 19, 20];
+
+  it.each(['men', 'mens', "men's", 'men’s', 'MEN'])(
+    '%j returns only men’s products, never women’s',
+    async (q) => {
+      expect(await searchIds(q)).toEqual(MENS);
+    },
+  );
+
+  it.each(['women', 'womens', "women's", 'women’s'])(
+    '%j returns women’s clothing and the women’s bracelet',
+    async (q) => {
+      expect(await searchIds(q)).toEqual([5, ...WOMENS]);
+    },
+  );
+
+  it('combines terms with AND', async () => {
+    expect(await searchIds('women jacket')).toEqual([15, 16, 17]);
+    expect(await searchIds('men jacket')).toEqual([3]);
+  });
+
+  it('matches hyphenated and spaced forms of the same word', async () => {
+    expect(await searchIds('t-shirt')).toEqual([2, 20]);
+    expect(await searchIds('t shirt')).toEqual([2, 20]);
+    expect(await searchIds('tshirt')).toEqual([2, 20]);
+  });
+
+  it('returns results in top-rated order', async () => {
+    const res = await request(app).get('/api/products').query({ q: 'gold' }).expect(200);
+    const rates = (res.body.products as Product[]).map((p) => p.rating.rate);
+    expect(rates.length).toBeGreaterThan(1);
+    expect(rates).toEqual([...rates].sort((a, b) => b - a));
+  });
+
+  it.each(['(', '.*', 'a|b', '\\'])('handles special characters in %j without error', async (q) => {
+    await request(app).get('/api/products').query({ q }).expect(200);
+  });
+
+  it('returns an empty list for punctuation-only input', async () => {
+    expect(await searchIds('!!!')).toEqual([]);
+  });
 });
 
 describe('GET /api/products/:id', () => {

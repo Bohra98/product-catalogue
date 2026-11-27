@@ -7,7 +7,7 @@ export const MAX_QUERY_LENGTH = 100;
 export function SearchBar() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const urlQuery = params.get('q') ?? '';
+  const urlQuery = (params.get('q') ?? '').trim();
   const [value, setValue] = useState(urlQuery);
 
   // Keep the box in sync when the URL changes (back button, shared link).
