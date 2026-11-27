@@ -1,0 +1,344 @@
+/*
+ * Theme tokens. A reskin or white-label theme overrides these variables
+ * (e.g. under a [data-theme] attribute) without touching component CSS.
+ */
+:root {
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-text: #1b2230;
+  --color-muted: #5b6575;
+  --color-border: #dfe3ea;
+  --color-accent: #1f5fd6;
+  --color-accent-contrast: #ffffff;
+  --color-error: #b42318;
+  --color-success-bg: #ecfdf3;
+  --color-rating: #b26b00;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --radius: 10px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --max-width: 1120px;
+  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 1px 3px rgb(16 24 40 / 10%);
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+h1 {
+  font-size: 1.75rem;
+  margin: 0 0 var(--space-4);
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin: var(--space-5) 0 var(--space-3);
+}
+
+img {
+  max-width: 100%;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Layout */
+.header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header__inner,
+.nav ul,
+.main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding-inline: var(--space-3);
+}
+
+.header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-3);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  list-style: none;
+  padding-block: var(--space-2) var(--space-3);
+  margin-block: 0;
+}
+
+.nav a {
+  color: var(--color-muted);
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.main {
+  padding-block: var(--space-5);
+}
+
+/* Search */
+.search {
+  display: flex;
+  gap: var(--space-2);
+  flex: 1 1 320px;
+  max-width: 480px;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Form controls */
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+  outline-offset: 2px;
+}
+
+button,
+.button {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Product grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 120ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card__link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Fixed square image area so every tile lines up regardless of image size. */
+.card__media {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #fff;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.card__media img {
+  position: absolute;
+  inset: var(--space-3);
+  width: calc(100% - 2 * var(--space-3));
+  height: calc(100% - 2 * var(--space-3));
+  object-fit: contain;
+}
+
+.card__body {
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card__meta {
+  margin: auto 0 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.card__price {
+  font-weight: 700;
+}
+
+.card__rating,
+.product__rating {
+  color: var(--color-rating);
+}
+
+/* Product page */
+.product {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 720px) {
+  .product {
+    grid-template-columns: 1fr;
+  }
+}
+
+.product__media {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  display: grid;
+  place-items: center;
+  align-self: start;
+}
+
+.product__media img {
+  max-height: 420px;
+  object-fit: contain;
+}
+
+.product__category {
+  margin: 0 0 var(--space-2);
+}
+
+.product__price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.product__description {
+  color: var(--color-muted);
+}
+
+/* Enquiry */
+.enquiry {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.enquiry h2 {
+  margin-top: 0;
+}
+
+.enquiry--sent {
+  background: var(--color-success-bg);
+}
+
+.field {
+  margin-bottom: var(--space-3);
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.field__error,
+.status--error {
+  color: var(--color-error);
+  margin: var(--space-1) 0 0;
+}
+
+[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.status {
+  color: var(--color-muted);
+}

@@ -1,0 +1,15 @@
+# Backend-specific ignores (the repo root .gitignore also applies).
+
+# Environment: never commit real values. Copy .env.example to .env locally.
+.env
+.env.*
+*.env
+!.env.example
+
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+
+# Local enquiry emails from MAIL_PROVIDER=file (may contain customer details)
+outbox/
